@@ -1,0 +1,18 @@
+<% 
+    statusHelper = (collection, status, id) => { 
+        let xhtmlStatus = '';
+        if(status === "active") {
+            xhtmlStatus = '<span class="label label-success">active</span>';
+        }else if(status === "unactive") {
+            xhtmlStatus = '<span class="label label-danger">unactive</span>';
+        }else if(status == "all") {
+            xhtmlStatus === '<span class="label label-danger">all</span>';
+        }
+
+        let link = systemConfig.prefixAdmin + '/' + collection + '/change-status/' + id+ '/' +status;
+
+        return `<a href="${link}">${xhtmlStatus}</a>`;
+    }
+%>
+
+

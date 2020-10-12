@@ -1,0 +1,81 @@
+<% paginationHelper = (pagination, type, currentStatus, keyword) => { 
+    let pageRanges = pagination.pageRanges;
+    let currentPage = pagination.currentPage;
+    let totalPages = Math.ceil((pagination.totalItems)/pagination.totalItemsPerPage);
+    let to = pagination.currentPage * pagination.totalItemsPerPage;
+    let form = to - pagination.totalItemsPerPage + 1;
+    if(to > pagination.totalItems) to = pagination.totalItems   ;
+
+
+    let xhtmlPagination = '';
+    let xhtmlStart      = '<li class="disabled"><a>Start</a></li>';
+    let xhtmlPrevious   = '<li class="disabled"><a>Previous</a></li>';
+    let xhtmlPages      = '';
+    let xhtmlNext       = '<li class="disabled"><a>Next</a></li>';
+    let xhtmlEnd        = '<li class="disabled"><a>End</a></li>';
+
+    let link = systemConfig.prefixAdmin + '/' + type + '/status/' + currentStatus;
+    if(keyword !== '') {
+        link += '?keyword=' +keyword + '&page=';
+    }else{
+        link += '?page=';
+    }
+
+    if(pagination.currentPage > 1){
+        xhtmlStart = `<li><a href="${link}1">Start</a></li>`;
+        xhtmlPrevious = `<li><a href="${link}${(pagination.currentPage-1)}">Previous</a></li>`
+    }
+
+    if(pagination.currentPage < totalPages) {
+        xhtmlNext = `<li><a href="${link}${(pagination.currentPage+1)}">Next</a></li>`;
+        xhtmlEnd = `<li><a href="${link}${totalPages}">End</a></li>`
+    }
+
+    let middle = Math.ceil(pageRanges/2);
+    let min = currentPage - middle + 1;
+    let max = min + pageRanges - 1;
+    
+    if( min <= 1){
+        min = 1;
+        max = pageRanges;
+    }
+
+    if( max >= totalPages){
+        max = totalPages;
+        min = ((max - pageRanges + 1) >=1) ? (max - pageRanges + 1) : 1;
+    }
+
+
+    for (let index = min; index <= max; index++) {   
+        if(index == currentPage){
+            xhtmlPages += `<li class="active"><a href="${link}${index}">${index}</a></li>`;
+        }else{
+            xhtmlPages += `<li><a href="${link}${index}">${index}</a></li>`;
+        }        
+    }
+
+    xhtmlPagination =`<ul class="pagination text-center">`+ xhtmlStart + xhtmlPrevious + xhtmlPages + xhtmlNext + xhtmlEnd + `</ul>`;
+    
+    return `
+        <div class="panel panel-info" id="pagination">
+            <div class="panel-heading">
+                Pagination
+                <span>^</span>
+                <span class="label label-warning">Total pages: ${totalPages}</span>
+                <span class="label label-danger">Total entries: ${pagination.totalItems}</span>
+            </div>
+
+            <div class="panel-body">
+                <div class="infor-pagination">
+                <p>Number of entries on the page: <span>${pagination.totalItemsPerPage}</span></p>
+
+                <p>
+                    Showing <span> ${form} </span> to <span>${to}</span> of <span>${pagination.totalItems}</span> entries
+                </p>
+                </div>
+                <div class="ad-pagination">
+                    ${xhtmlPagination}
+                </div>
+            </div>
+        </div>` 
+}%>
